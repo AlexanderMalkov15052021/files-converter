@@ -1,0 +1,477 @@
+{
+    "TraControlRule": [],
+    "mAreas": [
+        {
+            "mAreaID": 337840,
+            "mAreaName": "",
+            "mAreaRect": {
+                "bottomLeftPoint": {
+                    "x": -7.52,
+                    "y": 1.86,
+                    "z": 0
+                },
+                "bottomRightPoint": {
+                    "x": -2.02,
+                    "y": 1.86,
+                    "z": 0
+                },
+                "height": 2.48,
+                "orientation": {
+                    "w": 1,
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "topLeftPoint": {
+                    "x": -7.52,
+                    "y": 4.34,
+                    "z": 0
+                },
+                "topRightPoint": {
+                    "x": -2.02,
+                    "y": 4.34,
+                    "z": 0
+                },
+                "width": 5.5
+            },
+            "mAreaSpeedLimmiting": 0,
+            "mAreaType": 0,
+            "mContainsLaneMarks": [],
+            "mSensorControl": {
+                "mOpenBottomLaser": true,
+                "mOpenFallPrevention": true,
+                "mOpenFrontCameraRGB": true,
+                "mOpenFrontCamrea": true
+            }
+        }
+    ],
+    "mCrossRule": {
+        "area_num": [],
+        "area_num_partial": [],
+        "back_up": [],
+        "cross_stop": {},
+        "road_robot_num": [],
+        "robot_num": []
+    },
+    "mCrosss": [],
+    "mForbiddenAreaList": [],
+    "mLaneMarks": [
+        {
+            "mIsJockeyEndpoint": false,
+            "mLaneMarkDescript": "",
+            "mLaneMarkEnName": "",
+            "mLaneMarkID": 600523,
+            "mLaneMarkName": "",
+            "mLaneMarkType": 0,
+            "mLaneMarkWidth": 0.3,
+            "mLaneMarkXYZW": {
+                "w": 1,
+                "x": -7.84,
+                "y": 5,
+                "z": 0
+            },
+            "neighborsID": []
+        },
+        {
+            "mIsJockeyEndpoint": false,
+            "mLaneMarkDescript": "",
+            "mLaneMarkEnName": "",
+            "mLaneMarkID": 600522,
+            "mLaneMarkName": "",
+            "mLaneMarkType": 0,
+            "mLaneMarkWidth": 0.3,
+            "mLaneMarkXYZW": {
+                "w": 1,
+                "x": -0.22,
+                "y": 5,
+                "z": 0
+            },
+            "neighborsID": []
+        },
+        {
+            "mAvoidPointID": null,
+            "mBindRoadGroups": [],
+            "mID": null,
+            "mIsJockeyEndpoint": false,
+            "mLaneMarkDescript": "",
+            "mLaneMarkEnName": "",
+            "mLaneMarkID": 600521,
+            "mLaneMarkName": "",
+            "mLaneMarkType": 2,
+            "mLaneMarkWidth": 0.3,
+            "mLaneMarkXYZW": {
+                "w": 1,
+                "x": -5.92,
+                "y": 4.96,
+                "z": 0
+            },
+            "mMapName": "",
+            "mPrepointID": null,
+            "mTaskListName": "",
+            "neighborsID": []
+        },
+        {
+            "mAvoidPointID": null,
+            "mBindRoadGroups": [],
+            "mID": null,
+            "mIsJockeyEndpoint": false,
+            "mLaneMarkDescript": "",
+            "mLaneMarkEnName": "",
+            "mLaneMarkID": 600520,
+            "mLaneMarkName": "",
+            "mLaneMarkType": 2,
+            "mLaneMarkWidth": 0.3,
+            "mLaneMarkXYZW": {
+                "w": 1,
+                "x": -1.96,
+                "y": 4.96,
+                "z": 0
+            },
+            "mMapName": "",
+            "mPrepointID": null,
+            "mTaskListName": "",
+            "neighborsID": []
+        },
+        {
+            "mIsJockeyEndpoint": false,
+            "mLaneMarkDescript": "",
+            "mLaneMarkEnName": "",
+            "mLaneMarkID": 601797,
+            "mLaneMarkName": "",
+            "mLaneMarkType": 0,
+            "mLaneMarkWidth": 0.3,
+            "mLaneMarkXYZW": {
+                "w": 1,
+                "x": 0.5400233099916443,
+                "y": 5,
+                "z": 0
+            },
+            "neighborsID": []
+        },
+        {
+            "mAvoidPointID": null,
+            "mBindRoadGroups": [],
+            "mID": null,
+            "mIsJockeyEndpoint": false,
+            "mLaneMarkDescript": "",
+            "mLaneMarkEnName": "",
+            "mLaneMarkID": 600527,
+            "mLaneMarkName": "",
+            "mLaneMarkType": 2,
+            "mLaneMarkWidth": 0.3,
+            "mLaneMarkXYZW": {
+                "w": 1,
+                "x": -3.98,
+                "y": 7.22,
+                "z": 0
+            },
+            "mMapName": "",
+            "mPrepointID": null,
+            "mTaskListName": "",
+            "neighborsID": []
+        },
+        {
+            "mIsJockeyEndpoint": false,
+            "mLaneMarkDescript": "",
+            "mLaneMarkEnName": "",
+            "mLaneMarkID": 601796,
+            "mLaneMarkName": "",
+            "mLaneMarkType": 0,
+            "mLaneMarkWidth": 0.3,
+            "mLaneMarkXYZW": {
+                "w": 1,
+                "x": -8.04,
+                "y": 5,
+                "z": 0
+            },
+            "neighborsID": []
+        }
+    ],
+    "mMarkAreas": [],
+    "mMarkPoints": [
+        {
+            "mID": 1385560,
+            "mLinkAreas": [],
+            "mMarkXYZW": {
+                "w": 1,
+                "x": -5.18,
+                "y": 5.04,
+                "z": 0
+            }
+        },
+        {
+            "mID": 1385567,
+            "mLinkAreas": [],
+            "mMarkXYZW": {
+                "w": 1,
+                "x": -5.22,
+                "y": 6.86,
+                "z": 0
+            }
+        }
+    ],
+    "mRoadGroups": [],
+    "mRoads": [
+        {
+            "mBelongJunctionID": -1,
+            "mEndPosition": {
+                "x": -0.22,
+                "y": 5,
+                "z": 0
+            },
+            "mLForbiddenLine": [],
+            "mLForbiddenLineID": -1,
+            "mLaneCount": 1,
+            "mLanes": [
+                {
+                    "mAssistedDrawFlag": false,
+                    "mAvoidObstacle": false,
+                    "mBindMarkAreaID": -1,
+                    "mBorder": {
+                        "roadwidth_left": 0,
+                        "roadwidth_right": 0
+                    },
+                    "mDelta": 0.04,
+                    "mDirection": 0,
+                    "mEndPos": 600522,
+                    "mGoalAgain": false,
+                    "mLaneDescript": "",
+                    "mLaneID": 730765,
+                    "mLaneName": "",
+                    "mLanePro": 0,
+                    "mLaneType": 0,
+                    "mLeftAvoidanceArea": 0.1,
+                    "mLength": 7.62,
+                    "mObstacleDistance": 0.1,
+                    "mObstacleWidth": 0.1,
+                    "mPlannerAgain": false,
+                    "mPointOfInterest": [],
+                    "mPosID": 0,
+                    "mRightAvoidanceArea": 0.1,
+                    "mSpeed": 0,
+                    "mStartPos": 600523,
+                    "mWidth": 0.3,
+                    "usesensor": {
+                        "fall_arrest_system": true,
+                        "use_bottom_laser": true,
+                        "use_front_realsense": true,
+                        "use_front_realsense_rgb": true
+                    }
+                }
+            ],
+            "mLength": 7.62,
+            "mRForbiddenLine": [],
+            "mRForbiddenLineID": -1,
+            "mRoadID": 861988,
+            "mRoadName": "",
+            "mStartPosition": {
+                "x": -7.84,
+                "y": 5,
+                "z": 0
+            }
+        },
+        {
+            "mBelongJunctionID": -1,
+            "mEndPosition": {
+                "x": 0.5400233099916443,
+                "y": 5,
+                "z": 0
+            },
+            "mLForbiddenLine": [],
+            "mLForbiddenLineID": -1,
+            "mLaneCount": 1,
+            "mLanes": [
+                {
+                    "mAssistedDrawFlag": false,
+                    "mAvoidObstacle": false,
+                    "mBindMarkAreaID": -1,
+                    "mBorder": {
+                        "roadwidth_left": 0,
+                        "roadwidth_right": 0
+                    },
+                    "mDelta": 0.04,
+                    "mDirection": 0,
+                    "mEndPos": 601797,
+                    "mGoalAgain": false,
+                    "mLaneDescript": "",
+                    "mLaneID": 730764,
+                    "mLaneName": "",
+                    "mLanePro": 0,
+                    "mLaneType": 0,
+                    "mLeftAvoidanceArea": 0.1,
+                    "mLength": 0.7600233099916442,
+                    "mObstacleDistance": 0.1,
+                    "mObstacleWidth": 0.1,
+                    "mPlannerAgain": false,
+                    "mPointOfInterest": [],
+                    "mPosID": 0,
+                    "mRightAvoidanceArea": 0.1,
+                    "mSpeed": 0,
+                    "mStartPos": 600522,
+                    "mWidth": 0.3,
+                    "usesensor": {
+                        "fall_arrest_system": true,
+                        "use_bottom_laser": true,
+                        "use_front_realsense": true,
+                        "use_front_realsense_rgb": true
+                    }
+                }
+            ],
+            "mLength": 0.7600233099916442,
+            "mRForbiddenLine": [],
+            "mRForbiddenLineID": -1,
+            "mRoadID": 862011,
+            "mRoadName": "",
+            "mStartPosition": {
+                "x": -0.22,
+                "y": 5,
+                "z": 0
+            }
+        },
+        {
+            "mBelongJunctionID": -1,
+            "mEndPosition": {
+                "x": -7.84,
+                "y": 5,
+                "z": 0
+            },
+            "mLForbiddenLine": [],
+            "mLForbiddenLineID": -1,
+            "mLaneCount": 1,
+            "mLanes": [
+                {
+                    "mAssistedDrawFlag": false,
+                    "mAvoidObstacle": false,
+                    "mBindMarkAreaID": -1,
+                    "mBorder": {
+                        "roadwidth_left": 0,
+                        "roadwidth_right": 0
+                    },
+                    "mDelta": 0.04,
+                    "mDirection": 0,
+                    "mEndPos": 600523,
+                    "mGoalAgain": false,
+                    "mLaneDescript": "",
+                    "mLaneID": 729781,
+                    "mLaneName": "",
+                    "mLanePro": 0,
+                    "mLaneType": 0,
+                    "mLeftAvoidanceArea": 0.1,
+                    "mLength": 0.19999999999999887,
+                    "mObstacleDistance": 0.1,
+                    "mObstacleWidth": 0.1,
+                    "mPlannerAgain": false,
+                    "mPointOfInterest": [],
+                    "mPosID": 0,
+                    "mRightAvoidanceArea": 0.1,
+                    "mSpeed": 0,
+                    "mStartPos": 601796,
+                    "mWidth": 0.3,
+                    "usesensor": {
+                        "fall_arrest_system": true,
+                        "use_bottom_laser": true,
+                        "use_front_realsense": true,
+                        "use_front_realsense_rgb": true
+                    }
+                }
+            ],
+            "mLength": 0.19999999999999887,
+            "mRForbiddenLine": [],
+            "mRForbiddenLineID": -1,
+            "mRoadID": 860684,
+            "mRoadName": "",
+            "mStartPosition": {
+                "x": -8.04,
+                "y": 5,
+                "z": 0
+            }
+        }
+    ],
+    "mSceneMap": {
+        "delta": 0.04,
+        "mGridMsg": {
+            "data": "",
+            "header": {
+                "frame_id": "/map",
+                "seq": 0,
+                "stamp": {
+                    "nsecs": 0,
+                    "secs": 0
+                }
+            },
+            "info": {
+                "height": 0,
+                "map_load_time": {
+                    "nsecs": 0,
+                    "secs": 0
+                },
+                "origin": {
+                    "orientation": {
+                        "w": 1,
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                },
+                "resolution": 0.05000000074505806,
+                "width": 0
+            }
+        },
+        "mMapAttr": {
+            "mMapArea": 0,
+            "mMapCrossNum": 0,
+            "mMapFloor": 0,
+            "mMapLandMark": 7,
+            "mMapLaneNum": 3,
+            "mMapLength": 0,
+            "mMapName": "items",
+            "mMapOrigin": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "mMapResolution": 0.05000000074505806,
+            "mMapVerion": "1.0.0",
+            "mMapWidth": 0
+        },
+        "version": "1.0.0"
+    },
+    "mSelfCheck": [
+        {
+            "markIDs": [
+                600521
+            ],
+            "msg": "<Point naming error> Unnamed target point 600521",
+            "roadIDs": [],
+            "type": 1
+        },
+        {
+            "markIDs": [
+                600520
+            ],
+            "msg": "<Point naming error> Unnamed target point 600520",
+            "roadIDs": [],
+            "type": 1
+        },
+        {
+            "markIDs": [
+                600527
+            ],
+            "msg": "<Point naming error> Unnamed target point 600527",
+            "roadIDs": [],
+            "type": 1
+        },
+        {
+            "markIDs": [],
+            "msg": "The detection start point is missing and the target point cannot be detected",
+            "roadIDs": [],
+            "type": 3
+        }
+    ],
+    "mapRotateAngle": 0
+}
