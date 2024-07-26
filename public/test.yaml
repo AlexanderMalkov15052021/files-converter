@@ -1,0 +1,79 @@
+coordinate_system: reference_image
+crowd_sim:
+  agent_groups:
+    - {
+        agents_name:
+          [
+            tinyRobot2,
+            tinyRobot1,
+            tinyRobot3,
+            tinyRobot4,
+            tinyRobot5,
+            tinyRobot6,
+            tinyRobot7,
+            tinyRobot8,
+            tinyRobot9,
+            tinyRobot10,
+            tinyRobot11,
+            tinyRobot12,
+            tinyRobot13,
+            tinyRobot14,
+            tinyRobot15,
+            tinyRobot16,
+            tinyRobot17,
+            tinyRobot18,
+            tinyRobot19,
+            tinyRobot20,
+            tinyRobot21,
+          ],
+        agents_number: 21,
+        group_id: 0,
+        profile_selector: external_agent,
+        state_selector: external_static,
+        x: 0,
+        y: 0,
+      }
+  agent_profiles:
+    - {
+        ORCA_tau: 1,
+        ORCA_tauObst: 0.40000000000000002,
+        class: 1,
+        max_accel: 0,
+        max_angle_vel: 0,
+        max_neighbors: 10,
+        max_speed: 0,
+        name: external_agent,
+        neighbor_dist: 5,
+        obstacle_set: 1,
+        pref_speed: 0,
+        r: 0.25,
+      }
+  enable: 0
+  goal_sets: []
+  model_types: []
+  obstacle_set: { class: 1, file_name: L1_navmesh.nav, type: nav_mesh }
+  states:
+    - { final: 1, goal_set: -1, name: external_static, navmesh_file_name: "" }
+  transitions: []
+  update_time_step: 0.10000000000000001
+graphs: {}
+levels:
+  L1:
+    drawing:
+      filename: test.png
+    elevation: 0
+    fiducials:
+      - [0, 0, ""]
+    floors:
+      - vertices: [0, 1, 2, 3]
+    lanes: {}
+    layers: {}
+    measurements: {}
+    vertices:
+      - [0, 0, 0, ""]
+      - [1031, 0, 0, ""]
+      - [1031, 1031, 0, ""]
+      - [0, 1031, 0, ""]
+    walls: {}
+lifts: {}
+name: test
