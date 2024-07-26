@@ -6,7 +6,11 @@ export const getYaml = (json: JSON) => {
     const objJson = JSON.parse(strJson);
 
 
-    
+
+    const mAreaRect = objJson.mAreas[0]?.mAreaRect;
+
+
+
     const doc = new YAML.Document();
 
 
@@ -46,12 +50,24 @@ export const getYaml = (json: JSON) => {
             lanes: {},
             layers: {},
             measurements: {},
-            vertices: [
-                new YAML.Document([0, 0, ""], { flow: true }),
-                new YAML.Document([531, 0, 0, ""], { flow: true }),
-                new YAML.Document([531, 1031, 0, ""], { flow: true }),
-                new YAML.Document([0, 1031, 0, ""], { flow: true }),
-            ],
+            vertices: mAreaRect ? [
+                new YAML.Document(
+                    [mAreaRect.topLeftPoint.x, mAreaRect.topLeftPoint.y, mAreaRect.topLeftPoint.z, ""],
+                    { flow: true }
+                ),
+                new YAML.Document(
+                    [mAreaRect.topRightPoint.x, mAreaRect.topRightPoint.y, mAreaRect.topRightPoint.z, ""],
+                    { flow: true }
+                ),
+                new YAML.Document(
+                    [mAreaRect.bottomRightPoint.x, mAreaRect.bottomRightPoint.y, mAreaRect.bottomRightPoint.z, ""],
+                    { flow: true }
+                ),
+                new YAML.Document(
+                    [mAreaRect.bottomLeftPoint.x, mAreaRect.bottomLeftPoint.y, mAreaRect.bottomLeftPoint.z, ""],
+                    { flow: true }
+                ),
+            ] : [],
             walls: {}
         }
     });
