@@ -1,11 +1,11 @@
 import Head from "next/head";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
-import YAML from 'yaml';
 
 import { Button, Form, Input } from 'antd/lib';
 import Title from "antd/lib/typography/Title";
 import Link from "antd/lib/typography/Link";
 import { getJson } from "@/helpers/get/getJson";
+import { getYaml } from "@/helpers/get/getYaml";
 
 export default function Home() {
 
@@ -28,10 +28,12 @@ export default function Home() {
 
     reader.onload = async () => {
 
-      const json = getJson(reader.result as string);
+      const json: JSON = getJson(reader.result as string);
 
-      const doc = new YAML.Document();
-      doc.contents = json;
+
+      const doc = getYaml(json);
+      
+
       const file = new Blob([doc as unknown as string], { type: 'application/yaml' });
       const url = URL.createObjectURL(file);
 
