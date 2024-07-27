@@ -1,5 +1,10 @@
 import YAML from 'yaml';
 
+type MRoad = {
+    mStartPosition: { x: number, y: number, z: number },
+    mEndPosition: { x: number, y: number, z: number }
+}
+
 export const getYaml = (json: JSON) => {
 
     const strJson = JSON.stringify(json);
@@ -7,11 +12,99 @@ export const getYaml = (json: JSON) => {
 
 
 
+
+    const mMapAttr = objJson.mSceneMap?.mMapAttr;
     const mAreaRect = objJson.mAreas[0]?.mAreaRect;
 
 
 
+
+    const pointsData = objJson.mRoads.reduce(
+        (accum: { lanes: YAML.Document[]; marks: YAML.Document[]; }, item: MRoad) => {
+
+
+
+            const startPos = new YAML.Document(
+                [item.mStartPosition.x, item.mStartPosition.y, item.mStartPosition.z, ""],
+                { flow: true }
+            );
+
+            const endtPos = new YAML.Document(
+                [item.mEndPosition.x, item.mEndPosition.y, item.mEndPosition.z, ""],
+                { flow: true }
+            );
+
+            accum.marks.push(startPos, endtPos);
+
+            const lane = new YAML.Document(
+                [
+                    accum.marks.length - 2,
+                    accum.marks.length - 1,
+                    {
+                        bidirectional: [4, true],
+                        demo_mock_floor_name: [1, ""],
+                        demo_mock_lift_name: [1, ""],
+                        graph_idx: [2, 0],
+                        mutex: [1, ""],
+                        orientation: [1, ""],
+                        speed_limit: [3, 0]
+                    }
+                ],
+                { flow: true }
+            );
+
+            accum.lanes.push(lane);
+
+            return accum;
+        },
+        {
+            lanes: [],
+            marks: []
+        },
+    );
+
+
+
+
+
+
+
     const doc = new YAML.Document();
+
+
+
+
+
+
+    const addVertices = (marks: YAML.Document[]) => {
+        if (!objJson.mLaneMarks.length) return [];
+
+        const rectPoints = mAreaRect
+            ? [
+                new YAML.Document(
+                    [mAreaRect.topLeftPoint.x, mAreaRect.topLeftPoint.y, mAreaRect.topLeftPoint.z, ""],
+                    { flow: true }
+                ),
+                new YAML.Document(
+                    [mAreaRect.topRightPoint.x, mAreaRect.topRightPoint.y, mAreaRect.topRightPoint.z, ""],
+                    { flow: true }
+                ),
+                new YAML.Document(
+                    [mAreaRect.bottomRightPoint.x, mAreaRect.bottomRightPoint.y, mAreaRect.bottomRightPoint.z, ""],
+                    { flow: true }
+                ),
+                new YAML.Document(
+                    [mAreaRect.bottomLeftPoint.x, mAreaRect.bottomLeftPoint.y, mAreaRect.bottomLeftPoint.z, ""],
+                    { flow: true }
+                )
+            ]
+            : null;
+
+        const res = [rectPoints, marks].filter(item => item);
+
+        return res.flat();
+    }
+
 
 
 
@@ -44,30 +137,30 @@ export const getYaml = (json: JSON) => {
             fiducials: [
                 new YAML.Document([0, 0, ""], { flow: true })
             ],
-            floors: [
-                { vertices: new YAML.Document([0, 1, 2, 3], { flow: true }) }
-            ],
-            lanes: {},
-            layers: {},
-            measurements: {},
-            vertices: mAreaRect ? [
-                new YAML.Document(
-                    [mAreaRect.topLeftPoint.x, mAreaRect.topLeftPoint.y, mAreaRect.topLeftPoint.z, ""],
-                    { flow: true }
-                ),
-                new YAML.Document(
-                    [mAreaRect.topRightPoint.x, mAreaRect.topRightPoint.y, mAreaRect.topRightPoint.z, ""],
-                    { flow: true }
-                ),
-                new YAML.Document(
-                    [mAreaRect.bottomRightPoint.x, mAreaRect.bottomRightPoint.y, mAreaRect.bottomRightPoint.z, ""],
-                    { flow: true }
-                ),
-                new YAML.Document(
-                    [mAreaRect.bottomLeftPoint.x, mAreaRect.bottomLeftPoint.y, mAreaRect.bottomLeftPoint.z, ""],
-                    { flow: true }
-                ),
+            ...(mAreaRect && {
+                floors: [
+                    { parameters: new YAML.Document({ ceiling_scale: [3, 1], ceiling_texture: [1, "blue_linoleum"], indoor: [2, 0], texture_name: [1, "blue_linoleum"], texture_rotation: [3, 0], texture_scale: [3, 1] }, { flow: true }), vertices: new YAML.Document([0, 1, 2, 3], { flow: true }) }
+                ]
+            }),
+            lanes: pointsData.lanes,
+            layers: {
+                floor: {
+                    color: new YAML.Document([1, 0, 0, 0.5], { flow: true }),
+                    filename: "test.png",
+                    transform: {
+                        scale: 0.049700000000000001,
+                        translation_x: 0,
+                        translation_y: 0,
+                        yaw: 0
+                    },
+                    visible: true
+                }
+            },
+            measurements: mMapAttr ? [
+                new YAML.Document([0, 1, { distance: [3, mMapAttr.mMapWidth] }], { flow: true }),
+                new YAML.Document([0, 3, { distance: [3, mMapAttr.mMapLength] }], { flow: true })
             ] : [],
+            vertices: addVertices(pointsData.marks),
             walls: {}
         }
     });
@@ -79,7 +172,6 @@ export const getYaml = (json: JSON) => {
 
 
 
-
     // const vertices = new YAML.Document(objJson["vertices"], { flow: true });
     // doc.set("vertices", vertices);
 
@@ -87,6 +179,7 @@ export const getYaml = (json: JSON) => {
     //     return new YAML.Document(item, { flow: true });
     // });
     // doc.set("lanes", [...lanes]);
+
 
 
 

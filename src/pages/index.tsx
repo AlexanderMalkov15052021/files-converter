@@ -62,7 +62,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={"main-container"}>
-        <Title>Convert .mooe to .yaml</Title>
+        <Title>Конвертировать .mooe в .yaml</Title>
         <main className={"main-block"}>
 
           <form onClick={restFiles}>
