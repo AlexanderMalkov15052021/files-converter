@@ -51,6 +51,19 @@ input[type="file"] {
   padding: 4px 15px;
 }
 
+p {
+  font-size: 20px;
+}
+
+.message {
+  color: rgb(255, 68, 0);
+}
+
+.converting {
+  color: #1677ff;
+}
+
+
 @media (max-width: 800px) {
 
   html,

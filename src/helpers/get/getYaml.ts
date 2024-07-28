@@ -11,10 +11,10 @@ export const getYaml = (json: JSON) => {
     const objJson = JSON.parse(strJson);
 
 
-
-
     const mMapAttr = objJson.mSceneMap?.mMapAttr;
     const mAreaRect = objJson.mAreas[0]?.mAreaRect;
+    const mMapResolution = objJson.mSceneMap?.mMapAttr?.mMapResolution;
+    const mapRotateAngle = objJson.mapRotateAngle;
 
 
     const shiftIndex = mAreaRect ? 4 : 0;
@@ -50,12 +50,12 @@ export const getYaml = (json: JSON) => {
             });
 
             const laneIndexStart = containsIndexes.startIndexMark ?? (accum.marks.push(new YAML.Document(
-                [item.mStartPosition.x, item.mStartPosition.y, item.mStartPosition.z, ""],
+                [item.mStartPosition.x, item.mStartPosition.y * -1, item.mStartPosition.z, ""],
                 { flow: true }
             )) - 1);
 
             const laneIndexEnd = containsIndexes.endIndexMark ?? (accum.marks.push(new YAML.Document(
-                [item.mEndPosition.x, item.mEndPosition.y, item.mEndPosition.z, ""],
+                [item.mEndPosition.x, item.mEndPosition.y * -1, item.mEndPosition.z, ""],
                 { flow: true }
             )) - 1);
 
@@ -88,16 +88,7 @@ export const getYaml = (json: JSON) => {
     );
 
 
-
-
-
-
-
     const doc = new YAML.Document();
-
-
-
-
 
 
     const addVertices = (marks: YAML.Document[]) => {
@@ -106,19 +97,19 @@ export const getYaml = (json: JSON) => {
         const rectPoints = mAreaRect
             ? [
                 new YAML.Document(
-                    [mAreaRect.topLeftPoint.x, mAreaRect.topLeftPoint.y, mAreaRect.topLeftPoint.z, ""],
+                    [mAreaRect.topLeftPoint.x, mAreaRect.topLeftPoint.y * -1, mAreaRect.topLeftPoint.z, ""],
                     { flow: true }
                 ),
                 new YAML.Document(
-                    [mAreaRect.topRightPoint.x, mAreaRect.topRightPoint.y, mAreaRect.topRightPoint.z, ""],
+                    [mAreaRect.topRightPoint.x, mAreaRect.topRightPoint.y * -1, mAreaRect.topRightPoint.z, ""],
                     { flow: true }
                 ),
                 new YAML.Document(
-                    [mAreaRect.bottomRightPoint.x, mAreaRect.bottomRightPoint.y, mAreaRect.bottomRightPoint.z, ""],
+                    [mAreaRect.bottomRightPoint.x, mAreaRect.bottomRightPoint.y * -1, mAreaRect.bottomRightPoint.z, ""],
                     { flow: true }
                 ),
                 new YAML.Document(
-                    [mAreaRect.bottomLeftPoint.x, mAreaRect.bottomLeftPoint.y, mAreaRect.bottomLeftPoint.z, ""],
+                    [mAreaRect.bottomLeftPoint.x, mAreaRect.bottomLeftPoint.y * -1, mAreaRect.bottomLeftPoint.z, ""],
                     { flow: true }
                 )
             ]
@@ -128,8 +119,6 @@ export const getYaml = (json: JSON) => {
 
         return res.flat();
     }
-
-
 
 
     doc.set("coordinate_system", "reference_image");
@@ -155,7 +144,7 @@ export const getYaml = (json: JSON) => {
     doc.set("levels", {
         L1: {
             drawing: {
-                filename: "test.png"
+                filename: "domodedovo.png"
             },
             elevation: 0,
             fiducials: [
@@ -166,16 +155,18 @@ export const getYaml = (json: JSON) => {
                     { parameters: new YAML.Document({ ceiling_scale: [3, 1], ceiling_texture: [1, "blue_linoleum"], indoor: [2, 0], texture_name: [1, "blue_linoleum"], texture_rotation: [3, 0], texture_scale: [3, 1] }, { flow: true }), vertices: new YAML.Document([0, 1, 2, 3], { flow: true }) }
                 ]
             }),
-            lanes: pointsData.lanes,
+            lanes: pointsData?.lanes ?? [],
             layers: {
                 floor: {
                     color: new YAML.Document([1, 0, 0, 0.5], { flow: true }),
-                    filename: "test.png",
+                    filename: "domodedovo.png",
                     transform: {
-                        scale: 0.049700000000000001,
+                        scale: 0.05,
+                        // scale: mMapResolution ?? 0.05,
                         translation_x: 0,
                         translation_y: 0,
                         yaw: 0
+                        // yaw: mapRotateAngle ?? 0
                     },
                     visible: true
                 }
@@ -184,7 +175,7 @@ export const getYaml = (json: JSON) => {
                 new YAML.Document([0, 1, { distance: [3, mMapAttr.mMapWidth] }], { flow: true }),
                 new YAML.Document([0, 3, { distance: [3, mMapAttr.mMapLength] }], { flow: true })
             ] : [],
-            vertices: addVertices(pointsData.marks),
+            vertices: addVertices(pointsData?.marks ?? []),
             walls: {}
         }
     });
@@ -192,19 +183,6 @@ export const getYaml = (json: JSON) => {
     doc.set("lifts", {});
 
     doc.set("name", "test");
-
-
-
-
-    // const vertices = new YAML.Document(objJson["vertices"], { flow: true });
-    // doc.set("vertices", vertices);
-
-    // const lanes = objJson["lanes"].map((item: any) => {
-    //     return new YAML.Document(item, { flow: true });
-    // });
-    // doc.set("lanes", [...lanes]);
-
-
 
 
     return doc;

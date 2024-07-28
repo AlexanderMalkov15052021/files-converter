@@ -13,16 +13,24 @@ export default function Home() {
 
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [isMessageShow, setIsMessageShow] = useState<boolean>(false);
+
+
   const refInputFiles = useRef(null);
 
   const refFileName = useRef<string | null>(null);
 
+
   function readFile(evt: ChangeEvent<HTMLInputElement>) {
 
-    setLoading(true);
-
     if (!evt.target.files) return;
-    if (evt.target.files[0].name.split(".").at(-1) !== "mooe") return;
+
+    if (evt.target.files[0].name.split(".").at(-1) !== "mooe") {
+      setIsMessageShow(true);
+      return
+    };
+
+    setLoading(true);
 
     const file = evt.target.files[0];
     const reader = new FileReader();
@@ -55,6 +63,7 @@ export default function Home() {
 
   const restFiles = (evt: FormEvent<HTMLFormElement>) => {
     setHref(null);
+    setIsMessageShow(false);
     evt.currentTarget.reset();
     refFileName.current = null;
   };
@@ -79,7 +88,9 @@ export default function Home() {
             <input id="file-upload" ref={refInputFiles} type="file" onChange={readFile} />
           </form>
 
-          {loading && <p>Конвертирование файла...</p>}
+          {isMessageShow && <p className={"message"}>Необходим файл с расширением .mooe!</p>}
+
+          {loading && <p className={"converting"}>Конвертирование файла...</p>}
 
           {loading ? <Spin /> : <Button className="buttun-upload" disabled={href ? false : true} type={"primary"}>
             <Link
