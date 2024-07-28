@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 
-import { Button, Form, Input } from 'antd/lib';
+import { Button, Image, Spin } from 'antd/lib';
 import Title from "antd/lib/typography/Title";
 import Link from "antd/lib/typography/Link";
 import { getJson } from "@/helpers/get/getJson";
@@ -11,11 +11,15 @@ export default function Home() {
 
   const [href, setHref] = useState(null);
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const refInputFiles = useRef(null);
 
   const refFileName = useRef<string | null>(null);
 
   function readFile(evt: ChangeEvent<HTMLInputElement>) {
+
+    setLoading(true);
 
     if (!evt.target.files) return;
     if (evt.target.files[0].name.split(".").at(-1) !== "mooe") return;
@@ -32,12 +36,14 @@ export default function Home() {
 
 
       const doc = getYaml(json);
-      
+
 
       const file = new Blob([doc as unknown as string], { type: 'application/yaml' });
       const url = URL.createObjectURL(file);
 
       setHref(url as any);
+
+      setLoading(false);
 
     };
 
@@ -62,7 +68,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={"main-container"}>
-        <Title>Конвертировать .mooe в .yaml</Title>
+        <Image preview={false} style={{ width: "50vw", maxWidth: "500px" }} src="img/svg/ak.svg"></Image>
+        <Title className={"h1"}><div>Конвертировать</div><div>.mooe в .yaml</div></Title>
         <main className={"main-block"}>
 
           <form onClick={restFiles}>
@@ -71,12 +78,17 @@ export default function Home() {
             </label>
             <input id="file-upload" ref={refInputFiles} type="file" onChange={readFile} />
           </form>
-          <Link
-            style={{ pointerEvents: `${href ? "auto" : "none"}`, opacity: `${href ? 1 : .5}` }}
-            href={`${href ? href : ""}`} download={"output.yaml"}
-          >
-            <Button type={"primary"}>Скачать .yaml</Button>
-          </Link>
+
+          {loading && <p>Конвертирование файла...</p>}
+
+          {loading ? <Spin /> : <Button className="buttun-upload" disabled={href ? false : true} type={"primary"}>
+            <Link
+              href={`${href ? href : ""}`} download={"output.yaml"}
+            >
+              Скачать .yaml
+            </Link>
+          </Button>}
+
         </main>
       </div>
     </>

@@ -17,29 +17,53 @@ export const getYaml = (json: JSON) => {
     const mAreaRect = objJson.mAreas[0]?.mAreaRect;
 
 
+    const shiftIndex = mAreaRect ? 4 : 0;
 
 
     const pointsData = objJson.mRoads.reduce(
         (accum: { lanes: YAML.Document[]; marks: YAML.Document[]; }, item: MRoad) => {
 
+            const containsIndexes = accum.marks.reduce((
+                accumIndexMarks: { startIndexMark: number | null, endIndexMark: number | null },
+                currentMark: YAML.Document,
+                index: number
+            ) => {
 
+                const currX = (currentMark.contents as any).items[0].value;
+                const currY = (currentMark.contents as any).items[1].value;
+                const currZ = (currentMark.contents as any).items[2].value;
 
-            const startPos = new YAML.Document(
+                (item.mStartPosition.x === currX &&
+                    item.mStartPosition.y === currY &&
+                    item.mStartPosition.z === currZ
+                ) && (accumIndexMarks.startIndexMark = index);
+
+                (item.mEndPosition.x === currX &&
+                    item.mEndPosition.y === currY &&
+                    item.mEndPosition.z === currZ
+                ) && (accumIndexMarks.endIndexMark = index);
+
+                return accumIndexMarks;
+            }, {
+                startIndexMark: null,
+                endIndexMark: null
+            });
+
+            const laneIndexStart = containsIndexes.startIndexMark ?? (accum.marks.push(new YAML.Document(
                 [item.mStartPosition.x, item.mStartPosition.y, item.mStartPosition.z, ""],
                 { flow: true }
-            );
+            )) - 1);
 
-            const endtPos = new YAML.Document(
+            const laneIndexEnd = containsIndexes.endIndexMark ?? (accum.marks.push(new YAML.Document(
                 [item.mEndPosition.x, item.mEndPosition.y, item.mEndPosition.z, ""],
                 { flow: true }
-            );
+            )) - 1);
 
-            accum.marks.push(startPos, endtPos);
 
             const lane = new YAML.Document(
                 [
-                    accum.marks.length - 2,
-                    accum.marks.length - 1,
+                    laneIndexStart + shiftIndex,
+                    laneIndexEnd + shiftIndex,
                     {
                         bidirectional: [4, true],
                         demo_mock_floor_name: [1, ""],

@@ -14,6 +14,8 @@ body {
 .main-block {
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   gap: 20px;
   padding: 20px;
 }
@@ -34,4 +36,37 @@ input[type="file"] {
 .custom-file-upload:hover {
   border-color: #1677ff;
   color: #1677ff;
+}
+
+.h1 {
+  display: flex;
+  justify-content: center;
+}
+
+.buttun-upload {
+  padding: 0;
+}
+
+.buttun-upload a {
+  padding: 4px 15px;
+}
+
+@media (max-width: 800px) {
+
+  html,
+  body {
+    padding: 10px;
+  }
+
+  .buttun-upload {
+    width: fit-content;
+  }
+
+  .h1 {
+    flex-direction: column;
+  }
+
+  .h1 div {
+    font-size: 30px;
+  }
 }
