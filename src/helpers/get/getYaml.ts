@@ -126,10 +126,7 @@ export const getYaml = (json: JSON) => {
     const addVertices = (marks: YAML.Document[]) => {
         if (!objJson.mLaneMarks.length) return [];
 
-        mMapAttr.mMapOrigin.x
-        mMapAttr.mMapOrigin.y
-
-        const rectPoints = mAreaRect
+        const rectPoints = mMapAttr
             ? [
                 new YAML.Document(
                     [mMapAttr.mMapOrigin.x, mMapAttr.mMapOrigin.y * -1, mMapAttr.mMapOrigin.z, ""],
