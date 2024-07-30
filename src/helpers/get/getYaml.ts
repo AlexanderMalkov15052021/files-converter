@@ -70,7 +70,7 @@ export const getYaml = (json: JSON) => {
             }
 
             const endID = () => {
-                
+
                 const index = accum.marks.findIndex(yaml => {
 
                     const yamlX = (yaml.contents as any).items[0].value;
@@ -94,10 +94,10 @@ export const getYaml = (json: JSON) => {
 
             const lane = new YAML.Document(
                 [
-                    startID() + shiftIndex,
-                    endID() + shiftIndex,
+                    item.mLanes[0].mDirection === 2 ? endID() + shiftIndex : startID() + shiftIndex,
+                    item.mLanes[0].mDirection === 2 ? startID() + shiftIndex : endID() + shiftIndex,
                     {
-                        bidirectional: [4, true],
+                        bidirectional: item.mLanes[0].mDirection === 0 ? [4, true] : [4, false],
                         demo_mock_floor_name: [1, ""],
                         demo_mock_lift_name: [1, ""],
                         graph_idx: [2, 0],
