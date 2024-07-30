@@ -94,7 +94,7 @@ export default function Home() {
 
           {loading ? <Spin /> : <Button className="buttun-upload" disabled={href ? false : true} type={"primary"}>
             <Link
-              href={`${href ? href : ""}`} download={"output.yaml"}
+              href={`${href ? href : ""}`} download={"building.yaml"}
             >
               Скачать .yaml
             </Link>
