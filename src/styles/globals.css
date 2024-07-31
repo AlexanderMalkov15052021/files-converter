@@ -63,6 +63,9 @@ p {
   color: #1677ff;
 }
 
+.space {
+  opacity: 0;
+}
 
 @media (max-width: 800px) {
 
@@ -81,5 +84,8 @@ p {
 
   .h1 div {
     font-size: 30px;
+  }
+  .space {
+    display: none;
   }
 }

@@ -78,7 +78,7 @@ export default function Home() {
       </Head>
       <div className={"main-container"}>
         <Image preview={false} style={{ width: "50vw", maxWidth: "500px" }} src="img/svg/ak.svg"></Image>
-        <Title className={"h1"}><div>Конвертировать</div><div>.mooe в .yaml</div></Title>
+        <Title className={"h1"}><div>Конвертировать</div><span className={"space"}>n</span><div>.mooe в .yaml</div></Title>
         <main className={"main-block"}>
 
           <form onClick={restFiles}>

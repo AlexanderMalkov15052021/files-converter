@@ -6,6 +6,60 @@ type MRoad = {
     mEndPosition: { x: number, y: number, z: number }
 }
 
+const getMarksParams = (mark: any) => {
+
+    if (mark.mLaneMarkType === 11 && mark.mLaneMarkName.includes("charge")) {
+        return [
+            mark.mLaneMarkXYZW.x,
+            mark.mLaneMarkXYZW.y * -1,
+            mark.mLaneMarkXYZW.z,
+            mark.mLaneMarkName,
+            {
+                dock_name: [1, "dock_" + mark.mLaneMarkName.replace("charge0", "")],
+                is_charger: [4, true],
+                is_holding_point: [4, true],
+                is_parking_spot: [4, true],
+                spawn_robot_name: [1, "tinyRobot" + mark.mLaneMarkName.replace("charge0", "")],
+                spawn_robot_type: [1, "TinyRobot"]
+            }
+        ];
+    }
+
+    if (mark.mLaneMarkType === 11) {
+        return [
+            mark.mLaneMarkXYZW.x,
+            mark.mLaneMarkXYZW.y * -1,
+            mark.mLaneMarkXYZW.z,
+            mark.mLaneMarkName,
+            {
+                dock_name: [1, mark.mLaneMarkName],
+                is_charger: [4, false],
+                is_holding_point: [4, false],
+                is_parking_spot: [4, false],
+                spawn_robot_name: [1, ""],
+                spawn_robot_type: [1, ""]
+            }
+        ];
+    }
+
+
+
+
+
+    return [
+        mark.mLaneMarkXYZW.x,
+        mark.mLaneMarkXYZW.y * -1,
+        mark.mLaneMarkXYZW.z,
+        "",
+        // {
+        //     dock_name: [1, "point" + mark.mLaneMarkName]
+        // }
+    ];
+
+
+
+}
+
 export const getYaml = (json: JSON) => {
 
     const strJson = JSON.stringify(json);
@@ -19,83 +73,42 @@ export const getYaml = (json: JSON) => {
     const shiftIndex = mAreaRect ? 4 : 0;
 
 
-    const pointsData = objJson.mRoads.reduce(
-        (accum: { lanes: YAML.Document[]; marks: YAML.Document[] }, item: MRoad) => {
 
-            const laneMarks = objJson.mLaneMarks.reduce(
-                (laneMarkAccum: { startPos: YAML.Document, endPos: YAML.Document }, laneMark: any) => {
+    const targetLaneMarks = objJson.mLaneMarks.map((mark: any) => {
+        return {
+            id: mark.mLaneMarkID,
+            mark: new YAML.Document(
+                getMarksParams(mark),
+                { flow: true }
+            )
+        };
+    });
 
-                    if (laneMark.mLaneMarkID === item.mLanes[0].mStartPos) {
-                        laneMarkAccum.startPos = new YAML.Document(
-                            [laneMark.mLaneMarkXYZW.x, laneMark.mLaneMarkXYZW.y * -1, laneMark.mLaneMarkXYZW.z, ""],
-                            { flow: true }
-                        );
-                    }
 
-                    if (laneMark.mLaneMarkID === item.mLanes[0].mEndPos) {
-                        laneMarkAccum.endPos = new YAML.Document(
-                            [laneMark.mLaneMarkXYZW.x, laneMark.mLaneMarkXYZW.y * -1, laneMark.mLaneMarkXYZW.z, ""],
-                            { flow: true }
-                        );
-                    }
 
-                    return laneMarkAccum;
+    const lanes = objJson.mRoads.map(
+        (item: any) => {
+
+            const indexes = targetLaneMarks.reduce(
+                (accumIndexes: { start: number, end: number }, laneMarksObj: any, index: number) => {
+
+                    (laneMarksObj.id === item.mLanes[0].mStartPos) && (accumIndexes.start = index);
+
+
+                    (laneMarksObj.id === item.mLanes[0].mEndPos) && (accumIndexes.end = index);
+
+
+                    return accumIndexes;
 
                 }, {
-                startPos: null,
-                endPos: null
+                start: null,
+                end: null
             });
 
-            const startID = () => {
-
-                const index = accum.marks.findIndex(yaml => {
-
-                    const yamlX = (yaml.contents as any).items[0].value;
-                    const yamlY = (yaml.contents as any).items[1].value;
-                    const yamlZ = (yaml.contents as any).items[2].value;
-
-                    const startX = (laneMarks.startPos.contents as any).items[0].value;
-                    const startY = (laneMarks.startPos.contents as any).items[1].value;
-                    const startZ = (laneMarks.startPos.contents as any).items[2].value;
-
-                    return yamlX === startX && yamlY == startY && yamlZ === startZ;
-                });
-
-                if (index >= 0) {
-                    return index;
-                }
-                else {
-                    return accum.marks.push(laneMarks.startPos) - 1;
-                }
-            }
-
-            const endID = () => {
-
-                const index = accum.marks.findIndex(yaml => {
-
-                    const yamlX = (yaml.contents as any).items[0].value;
-                    const yamlY = (yaml.contents as any).items[1].value;
-                    const yamlZ = (yaml.contents as any).items[2].value;
-
-                    const startX = (laneMarks.endPos.contents as any).items[0].value;
-                    const startY = (laneMarks.endPos.contents as any).items[1].value;
-                    const startZ = (laneMarks.endPos.contents as any).items[2].value;
-
-                    return yamlX === startX && yamlY == startY && yamlZ === startZ;
-                });
-
-                if (index >= 0) {
-                    return index;
-                }
-                else {
-                    return accum.marks.push(laneMarks.endPos) - 1;
-                }
-            }
-
-            const lane = new YAML.Document(
+            return new YAML.Document(
                 [
-                    item.mLanes[0].mDirection === 2 ? endID() + shiftIndex : startID() + shiftIndex,
-                    item.mLanes[0].mDirection === 2 ? startID() + shiftIndex : endID() + shiftIndex,
+                    item.mLanes[0].mDirection === 2 ? indexes.end + shiftIndex : indexes.start + shiftIndex,
+                    item.mLanes[0].mDirection === 2 ? indexes.start + shiftIndex : indexes.end + shiftIndex,
                     {
                         bidirectional: item.mLanes[0].mDirection === 0 ? [4, true] : [4, false],
                         demo_mock_floor_name: [1, ""],
@@ -109,14 +122,7 @@ export const getYaml = (json: JSON) => {
                 { flow: true }
             );
 
-            accum.lanes.push(lane);
-
-            return accum;
-        },
-        {
-            lanes: [],
-            marks: []
-        },
+        }
     );
 
 
@@ -188,7 +194,7 @@ export const getYaml = (json: JSON) => {
                     { parameters: new YAML.Document({ ceiling_scale: [3, 1], ceiling_texture: [1, "blue_linoleum"], indoor: [2, 0], texture_name: [1, "blue_linoleum"], texture_rotation: [3, 0], texture_scale: [3, 1] }, { flow: true }), vertices: new YAML.Document([0, 1, 2, 3], { flow: true }) }
                 ]
             }),
-            lanes: pointsData?.lanes ?? [],
+            lanes: lanes ?? [],
             layers: {
                 floor: {
                     color: new YAML.Document([1, 0, 0, 0.5], { flow: true }),
@@ -206,7 +212,7 @@ export const getYaml = (json: JSON) => {
                 new YAML.Document([0, 1, { distance: [3, mMapAttr.mMapWidth] }], { flow: true }),
                 new YAML.Document([0, 3, { distance: [3, mMapAttr.mMapLength] }], { flow: true })
             ] : [],
-            vertices: addVertices(pointsData?.marks ?? []),
+            vertices: addVertices(targetLaneMarks ? targetLaneMarks.map((obj: any) => obj.mark) : []),
             walls: {}
         }
     });
