@@ -78,7 +78,7 @@ export default function Home() {
       </Head>
       <div className={"main-container"}>
         <Image preview={false} style={{ width: "50vw", maxWidth: "500px" }} src="img/svg/ak.svg"></Image>
-        <Title className={"h1"}><div>Конвертировать</div><span className={"space"}>n</span><div>.mooe в .yaml</div></Title>
+        <Title className={"h1"}><span className={"titleBlock"}><span>Конвертировать</span><span>.mooe в .yaml</span></span></Title>
         <main className={"main-block"}>
 
           <form onClick={restFiles}>
@@ -94,7 +94,7 @@ export default function Home() {
 
           {loading ? <Spin /> : <Button className="buttun-upload" disabled={href ? false : true} type={"primary"}>
             <Link
-              href={`${href ? href : ""}`} download={"building.yaml"}
+              href={`${href ? href : ""}`} download={"domodedovo.building.yaml"}
             >
               Скачать .yaml
             </Link>

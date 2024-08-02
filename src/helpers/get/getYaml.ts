@@ -6,57 +6,51 @@ type MRoad = {
     mEndPosition: { x: number, y: number, z: number }
 }
 
+const agents_name: string[] = [];
+
 const getMarksParams = (mark: any) => {
 
     if (mark.mLaneMarkType === 11 && mark.mLaneMarkName.includes("charge")) {
+
+        const name = mark.mLaneMarkName.replace("charge0", "");
+
+        const robotName = `tinyRobot${name}`;
+
+        agents_name.push(robotName);
+
         return [
             mark.mLaneMarkXYZW.x,
             mark.mLaneMarkXYZW.y * -1,
             mark.mLaneMarkXYZW.z,
             mark.mLaneMarkName,
             {
-                dock_name: [1, "dock_" + mark.mLaneMarkName.replace("charge0", "")],
+                dock_name: [1, `dock_${name}`],
                 is_charger: [4, true],
                 is_holding_point: [4, true],
                 is_parking_spot: [4, true],
-                spawn_robot_name: [1, "tinyRobot" + mark.mLaneMarkName.replace("charge0", "")],
+                spawn_robot_name: [1, robotName],
                 spawn_robot_type: [1, "TinyRobot"]
             }
         ];
     }
+
 
     if (mark.mLaneMarkType === 11) {
         return [
             mark.mLaneMarkXYZW.x,
             mark.mLaneMarkXYZW.y * -1,
             mark.mLaneMarkXYZW.z,
-            mark.mLaneMarkName,
-            {
-                dock_name: [1, mark.mLaneMarkName],
-                is_charger: [4, false],
-                is_holding_point: [4, false],
-                is_parking_spot: [4, false],
-                spawn_robot_name: [1, ""],
-                spawn_robot_type: [1, ""]
-            }
+            mark.mLaneMarkName
         ];
     }
-
-
-
 
 
     return [
         mark.mLaneMarkXYZW.x,
         mark.mLaneMarkXYZW.y * -1,
         mark.mLaneMarkXYZW.z,
-        "",
-        // {
-        //     dock_name: [1, "point" + mark.mLaneMarkName]
-        // }
+        ""
     ];
-
-
 
 }
 
@@ -71,7 +65,6 @@ export const getYaml = (json: JSON) => {
 
 
     const shiftIndex = mAreaRect ? 4 : 0;
-
 
 
     const targetLaneMarks = objJson.mLaneMarks.map((mark: any) => {
@@ -164,7 +157,7 @@ export const getYaml = (json: JSON) => {
 
     doc.set("crowd_sim", {
         agent_groups: [
-            new YAML.Document({ agents_name: ["tinyRobot2", "tinyRobot1", "tinyRobot3", "tinyRobot4", "tinyRobot5", "tinyRobot6", "tinyRobot7", "tinyRobot8", "tinyRobot9", "tinyRobot10", "tinyRobot11", "tinyRobot12", "tinyRobot13", "tinyRobot14", "tinyRobot15", "tinyRobot16", "tinyRobot17", "tinyRobot18", "tinyRobot19", "tinyRobot20", "tinyRobot21"], agents_number: 21, group_id: 0, profile_selector: "external_agent", state_selector: "external_static", x: 0, y: 0 }, { flow: true })
+            new YAML.Document({ agents_name, agents_number: 21, group_id: 0, profile_selector: "external_agent", state_selector: "external_static", x: 0, y: 0 }, { flow: true })
         ],
         agent_profiles: [
             new YAML.Document({ ORCA_tau: 1, ORCA_tauObst: 0.40000000000000002, class: 1, max_accel: 0, max_angle_vel: 0, max_neighbors: 10, max_speed: 0, name: "external_agent", neighbor_dist: 5, obstacle_set: 1, pref_speed: 0, r: 0.25 }, { flow: true })
@@ -200,7 +193,7 @@ export const getYaml = (json: JSON) => {
                     color: new YAML.Document([1, 0, 0, 0.5], { flow: true }),
                     filename: "domodedovo.png",
                     transform: {
-                        scale: 0.05,
+                        scale: objJson.mSceneMap.mGridMsg.info.resolution ?? 0.05,
                         translation_x: 0,
                         translation_y: 0,
                         yaw: 0
@@ -209,8 +202,7 @@ export const getYaml = (json: JSON) => {
                 }
             },
             measurements: mMapAttr ? [
-                new YAML.Document([0, 1, { distance: [3, mMapAttr.mMapWidth] }], { flow: true }),
-                new YAML.Document([0, 3, { distance: [3, mMapAttr.mMapLength] }], { flow: true })
+                new YAML.Document([0, 1, { distance: [3, mMapAttr.mMapLength] }], { flow: true })
             ] : [],
             vertices: addVertices(targetLaneMarks ? targetLaneMarks.map((obj: any) => obj.mark) : []),
             walls: {}
@@ -219,7 +211,7 @@ export const getYaml = (json: JSON) => {
 
     doc.set("lifts", {});
 
-    doc.set("name", "test");
+    doc.set("name", "domodedovo");
 
 
     return doc;

@@ -63,8 +63,10 @@ p {
   color: #1677ff;
 }
 
-.space {
-  opacity: 0;
+
+.titleBlock {
+  display: flex;
+  gap: .3em;
 }
 
 @media (max-width: 800px) {
@@ -78,14 +80,12 @@ p {
     width: fit-content;
   }
 
-  .h1 {
-    flex-direction: column;
-  }
-
   .h1 div {
     font-size: 30px;
   }
-  .space {
-    display: none;
+
+  .titleBlock {
+    flex-direction: column;
   }
+
 }
