@@ -5,9 +5,9 @@ const LoadingBlock = ({ time }: { time: number[] }) => {
     return <>
         <p className={"converting"}>Конвертирование файла...</p>
         <div className={"counter"}>
-            <span style={{ color: "rgba(0, 0, 0, 0.88)" }}>{time[0]}</span>
+            <span style={{ color: "rgba(0, 0, 0, 0.88)" }}>{time && time[0]}</span>
             <span> - мин. : </span>
-            <span style={{ color: "rgba(0, 0, 0, 0.88)" }}>{time[1]}</span>
+            <span style={{ color: "rgba(0, 0, 0, 0.88)" }}>{time && time[1]}</span>
             <span> - сек.</span>
         </div>
         <Spin />

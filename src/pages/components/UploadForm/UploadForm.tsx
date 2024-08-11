@@ -1,4 +1,3 @@
-import { Spin } from "antd";
 import { ChangeEvent, FormEvent, memo, MutableRefObject } from "react";
 
 type Props = {
@@ -13,7 +12,7 @@ const UploadForm = ({ loading, refFileName, refInputFiles, restFiles, readFile }
     return <>
         <form onClick={loading ? evt => evt.preventDefault() : restFiles}>
             <label htmlFor="file-upload" className={loading ? "disabledUpload custom-file-upload" : "custom-file-upload"}>
-                {refFileName.current ? refFileName.current : "Выберите файл .mooe"}
+                {refFileName?.current ? refFileName?.current : "Выберите файл .mooe"}
             </label>
             <input id="file-upload" ref={refInputFiles} type="file" onChange={loading ? evt => evt.preventDefault() : readFile} />
         </form>

@@ -8,7 +8,7 @@ import { getYaml } from "@/helpers/get/getYaml";
 
 import dynamic from 'next/dynamic';
 
-import Worker from "worker-loader!./workers/yamlWorker.ts";
+import Worker from "worker-loader!@/workers/yamlWorker.ts";
 
 const DownloadBtn = dynamic(() => import("./components/DownloadBtn/DownloadBtn"), { ssr: false });
 

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['rc-util', '@ant-design'],
   webpack: config => {
     config.module.rules.push({
 

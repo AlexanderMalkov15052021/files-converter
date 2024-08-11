@@ -1,10 +1,10 @@
 import YAML from 'yaml';
 
-type MRoad = {
-    mLanes: any;
-    mStartPosition: { x: number, y: number, z: number },
-    mEndPosition: { x: number, y: number, z: number }
-}
+// type MRoad = {
+//     mLanes: any;
+//     mStartPosition: { x: number, y: number, z: number },
+//     mEndPosition: { x: number, y: number, z: number }
+// }
 
 const agents_name: string[] = [];
 
