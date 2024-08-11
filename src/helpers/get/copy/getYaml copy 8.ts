@@ -14,38 +14,10 @@ const nearbyWaysData: any[] = [];
 
 const tinyRobotCount: string[] = [];
 
-// https://translated.turbopages.org/proxy_u/en-ru.ru.b89da1a8-66b5f078-d67357f8-74722d776562/https/stackoverflow.com/questions/849211/shortest-distance-between-a-point)%20-and-a-line-segment
-function pDistance(x: number, y: number, x1: number, y1: number, x2: number, y2: number) {
-
-    var A = x - x1;
-    var B = y - y1;
-    var C = x2 - x1;
-    var D = y2 - y1;
-
-    var dot = A * C + B * D;
-    var len_sq = C * C + D * D;
-    var param = -1;
-    if (len_sq != 0)
-        param = dot / len_sq;
-
-    var xx, yy;
-
-    if (param < 0) {
-        xx = x1;
-        yy = y1;
-    }
-    else if (param > 1) {
-        xx = x2;
-        yy = y2;
-    }
-    else {
-        xx = x1 + param * C;
-        yy = y1 + param * D;
-    }
-
-    var dx = x - xx;
-    var dy = y - yy;
-    return Math.sqrt(dx * dx + dy * dy);
+const getdistanceToWay = (x_1: number, y_1: number, x_2: number, y_2: number, x_3: number, y_3: number) => {
+    const divisible = Math.abs((x_2 - x_1) * (y_1 - y_3) - (x_1 - x_3) * (y_2 - y_1));
+    const divider = Math.sqrt(Math.pow((x_2 - x_1), 2) + Math.pow((y_2 - y_1), 2));
+    return divisible / divider;
 }
 
 const getMarksParams = (mark: any, index: number) => {
@@ -63,8 +35,7 @@ const getMarksParams = (mark: any, index: number) => {
         nearbyWaysData.push({
             laneIndex: null,
             markIndex: index,
-            proximity: 1000 * 1000,
-            lane: null
+            distance: 1000
         });
 
         tinyRobotCount.push(robotName);
@@ -73,13 +44,13 @@ const getMarksParams = (mark: any, index: number) => {
             mark.mLaneMarkXYZW.x,
             mark.mLaneMarkXYZW.y * -1,
             mark.mLaneMarkXYZW.z,
-            `tinyRobot${tinyRobotCount.length}_charger`,
+            mark.mLaneMarkName,
             {
                 dock_name: [1, `dock_${name}`],
                 is_charger: [4, true],
                 is_holding_point: [4, true],
                 is_parking_spot: [4, true],
-                spawn_robot_name: [1, `tinyRobot${tinyRobotCount.length}`],
+                spawn_robot_name: [1, `TinyRobot${tinyRobotCount.length}_charger`],
                 spawn_robot_type: [1, "TinyRobot"]
             }
         ];
@@ -93,8 +64,7 @@ const getMarksParams = (mark: any, index: number) => {
         nearbyWaysData.push({
             laneIndex: null,
             markIndex: index,
-            proximity: 1000 * 1000,
-            lane: null
+            distance: 1000
         });
 
         return [
@@ -162,13 +132,10 @@ export const getYaml = (json: JSON) => {
 
             return new YAML.Document(
                 [
-                    indexes.start,
-                    indexes.end,
-                    // item.mLanes[0].mDirection === 2 ? indexes.end : indexes.start,
-                    // item.mLanes[0].mDirection === 2 ? indexes.start : indexes.end,
+                    item.mLanes[0].mDirection === 2 ? indexes.end : indexes.start,
+                    item.mLanes[0].mDirection === 2 ? indexes.start : indexes.end,
                     {
-                        bidirectional: [4, true],
-                        // bidirectional: item.mLanes[0].mDirection === 0 ? [4, true] : [4, false],
+                        bidirectional: item.mLanes[0].mDirection === 0 ? [4, true] : [4, false],
                         demo_mock_floor_name: [1, ""],
                         demo_mock_lift_name: [1, ""],
                         graph_idx: [2, 0],
@@ -247,20 +214,22 @@ export const getYaml = (json: JSON) => {
             const x_3 = place.mLaneMarkXYZW.x;
             const y_3 = place.mLaneMarkXYZW.y;
 
-            const proximity = pDistance(x_3, y_3, x_1, y_1, x_2, y_2);
+            const distance = getdistanceToWay(x_1, y_1, x_2, y_2, x_3, y_3);
 
-            if (nearbyWaysData[ind].proximity > proximity) {
-                nearbyWaysData[ind].proximity = proximity;
+            if (nearbyWaysData[ind].distance > distance) {
+
+                nearbyWaysData[ind].distance = distance;
                 nearbyWaysData[ind].laneIndex = index;
-                nearbyWaysData[ind].lane = lane;
+
             }
 
         });
 
-        const startPointIndex = nearbyWaysData[ind].lane.contents.items[0].value;
-        const endPointIndex = nearbyWaysData[ind].lane.contents.items[1].value;
 
-        const bidirectional = nearbyWaysData[ind].lane.contents.items[2].items[0].value.items[1].value;
+        const startPointIndex = currentLanes[nearbyWaysData[ind].laneIndex].contents.items[0].value;
+        const endPointIndex = currentLanes[nearbyWaysData[ind].laneIndex].contents.items[1].value;
+
+        const bidirectional = currentLanes[nearbyWaysData[ind].laneIndex].contents.items[2].items[0].value.items[1].value;
 
 
         const lane_1 = new YAML.Document(
@@ -297,15 +266,11 @@ export const getYaml = (json: JSON) => {
             { flow: true }
         );
 
-        nearbyWaysData[ind].proximity < 0.3 && (currentLanes = [
-            ...currentLanes.filter((lane: any) => lane !== nearbyWaysData[ind].lane),
+        nearbyWaysData[ind].distance < 0.3 && (currentLanes = [
+            ...currentLanes.filter((_: any, index: number) => index !== nearbyWaysData[ind].laneIndex),
             lane_1,
             lane_2
         ]);
-
-        nearbyWaysData[ind].proximity = 1000 * 1000;
-        nearbyWaysData[ind].laneIndex = null;
-        nearbyWaysData[ind].lane = null;
 
     });
 

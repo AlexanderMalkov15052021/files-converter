@@ -63,10 +63,23 @@ p {
   color: #1677ff;
 }
 
-
 .titleBlock {
   display: flex;
   gap: .3em;
+}
+
+.disabledUpload {
+  opacity: .5;
+}
+
+.disabledUpload:hover {
+  cursor: not-allowed;
+}
+
+.counter {
+  font-size: 30px;
+  color: #1677ff;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 800px) {

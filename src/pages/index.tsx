@@ -1,13 +1,30 @@
 import Head from "next/head";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
 
-import { Button, Image, Spin } from 'antd/lib';
+import { Image } from 'antd/lib';
 import Title from "antd/lib/typography/Title";
-import Link from "antd/lib/typography/Link";
 import { getJson } from "@/helpers/get/getJson";
 import { getYaml } from "@/helpers/get/getYaml";
 
+import dynamic from 'next/dynamic';
+
+import Worker from "worker-loader!./workers/yamlWorker.ts";
+
+const DownloadBtn = dynamic(() => import("./components/DownloadBtn/DownloadBtn"), { ssr: false });
+
+const LoadingBlock = dynamic(() => import("./components/LoadingBlock/LoadingBlock"), { ssr: false });
+
+const UploadForm = dynamic(() => import("./components/UploadForm/UploadForm"), { ssr: false });
+
 export default function Home() {
+
+  // setInterval(() => {
+  //   const now = new Date();
+
+  //   console.log(now.getMinutes() + " : " + now.getSeconds());
+  // }, 1000);
+
+  const [time, setTime] = useState([0, 0]);
 
   const [href, setHref] = useState(null);
 
@@ -18,10 +35,12 @@ export default function Home() {
 
   const refInputFiles = useRef(null);
 
+  const refTime = useRef([0, 0]);
+
   const refFileName = useRef<string | null>(null);
 
 
-  function readFile(evt: ChangeEvent<HTMLInputElement>) {
+  const readFile = useCallback((evt: ChangeEvent<HTMLInputElement>) => {
 
     if (!evt.target.files) return;
 
@@ -40,18 +59,60 @@ export default function Home() {
 
     reader.onload = async () => {
 
-      const json: JSON = getJson(reader.result as string);
+      const interval = setInterval(() => {
 
+        if (refTime.current[1] === 59) {
+          setTime([refTime.current[0] + 1, 0]);
+          refTime.current[0] += 1;
+          refTime.current[1] = 0;
+        }
+        else {
+          setTime([refTime.current[0], refTime.current[1] + 1]);
+          refTime.current[1] += 1;
+        }
 
-      const doc = getYaml(json);
+      }, 1000);
 
+      if (globalThis.window && globalThis.Worker) {
 
-      const file = new Blob([doc as unknown as string], { type: 'application/yaml' });
-      const url = URL.createObjectURL(file);
+        console.time("Converting files");
 
-      setHref(url as any);
+        const worker = new Worker();
 
-      setLoading(false);
+        worker.postMessage({ result: JSON.parse(reader.result as string) });
+
+        worker.onmessage = evt => {
+
+          setHref(evt.data.url);
+
+          setLoading(false);
+
+          console.timeEnd("Converting files");
+
+          clearInterval(interval);
+        };
+
+      }
+      else {
+        console.time("Converting files");
+
+        console.log("Web worker не поддерживается браузером!");
+
+        const json: JSON = getJson(reader.result as string);
+
+        const doc = getYaml(json);
+
+        const file = new Blob([doc as unknown as string], { type: 'application/yaml' });
+        const url = URL.createObjectURL(file);
+
+        setHref(url as any);
+
+        setLoading(false);
+
+        console.timeEnd("Converting files");
+
+        clearInterval(interval);
+      }
 
     };
 
@@ -59,14 +120,16 @@ export default function Home() {
       console.error(reader.error);
     };
 
-  }
+  }, [refFileName.current]);
 
-  const restFiles = (evt: FormEvent<HTMLFormElement>) => {
+  const restFiles = useCallback((evt: FormEvent<HTMLFormElement>) => {
     setHref(null);
     setIsMessageShow(false);
     evt.currentTarget.reset();
     refFileName.current = null;
-  };
+    setTime([0, 0]);
+    refTime.current = [0, 0];
+  }, [refFileName.current]);
 
   return (
     <>
@@ -81,24 +144,31 @@ export default function Home() {
         <Title className={"h1"}><span className={"titleBlock"}><span>Конвертировать</span><span>.mooe в .yaml</span></span></Title>
         <main className={"main-block"}>
 
-          <form onClick={restFiles}>
-            <label htmlFor="file-upload" className="custom-file-upload">
-              {refFileName.current ? refFileName.current : "Выберите файл .mooe"}
-            </label>
-            <input id="file-upload" ref={refInputFiles} type="file" onChange={readFile} />
-          </form>
+          <UploadForm
+            loading={loading}
+            refFileName={refFileName}
+            refInputFiles={refInputFiles}
+            restFiles={restFiles}
+            readFile={readFile}
+          />
 
           {isMessageShow && <p className={"message"}>Необходим файл с расширением .mooe!</p>}
 
-          {loading && <p className={"converting"}>Конвертирование файла...</p>}
+          {loading && <LoadingBlock time={time} />}
 
-          {loading ? <Spin /> : <Button className="buttun-upload" disabled={href ? false : true} type={"primary"}>
-            <Link
-              href={`${href ? href : ""}`} download={"domodedovo.building.yaml"}
-            >
-              Скачать .yaml
-            </Link>
-          </Button>}
+          <DownloadBtn href={href} />
+
+          {
+            href && <div>
+              <Title style={{fontSize: "30px"}} className={"h2"}>Общее время конвертирования</Title>
+              <div className={"counter"}>
+                <span style={{ color: "rgba(0, 0, 0, 0.88)" }}>{time[0]}</span>
+                <span> - мин. : </span>
+                <span style={{ color: "rgba(0, 0, 0, 0.88)" }}>{time[1]}</span>
+                <span> - сек.</span>
+              </div>
+            </div>
+          }
 
         </main>
       </div>
