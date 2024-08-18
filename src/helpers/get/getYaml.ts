@@ -14,6 +14,13 @@ const nearbyWaysData: any[] = [];
 
 const tinyRobotCount: string[] = [];
 
+const offset = 20;
+
+const flip = -1;
+
+const coordinateOffsets = [222.17 + offset, 19.5905 + offset];
+
+
 // https://translated.turbopages.org/proxy_u/en-ru.ru.b89da1a8-66b5f078-d67357f8-74722d776562/https/stackoverflow.com/questions/849211/shortest-distance-between-a-point)%20-and-a-line-segment
 function pDistance(x: number, y: number, x1: number, y1: number, x2: number, y2: number) {
 
@@ -52,9 +59,7 @@ const getMarksParams = (mark: any, index: number) => {
 
     if (mark.mLaneMarkType === 11 && mark.mLaneMarkName.includes("charge")) {
 
-        const name = mark.mLaneMarkName.replace("charge0", "");
-
-        const robotName = `tinyRobot${name}`;
+        const robotName = `tinyRobot${tinyRobotCount.length + 1}`;
 
         agents_name.push(robotName);
 
@@ -71,11 +76,11 @@ const getMarksParams = (mark: any, index: number) => {
 
         return [
             mark.mLaneMarkXYZW.x,
-            mark.mLaneMarkXYZW.y * -1,
+            mark.mLaneMarkXYZW.y * flip,
             mark.mLaneMarkXYZW.z,
-            `tinyRobot${tinyRobotCount.length}_charger`,
+            `dock_${tinyRobotCount.length}`,
             {
-                dock_name: [1, `dock_${name}`],
+                dock_name: [1, `dock_${tinyRobotCount.length}`],
                 is_charger: [4, true],
                 is_holding_point: [4, true],
                 is_parking_spot: [4, true],
@@ -99,7 +104,7 @@ const getMarksParams = (mark: any, index: number) => {
 
         return [
             mark.mLaneMarkXYZW.x,
-            mark.mLaneMarkXYZW.y * -1,
+            mark.mLaneMarkXYZW.y * flip,
             mark.mLaneMarkXYZW.z,
             mark.mLaneMarkName
         ];
@@ -108,7 +113,7 @@ const getMarksParams = (mark: any, index: number) => {
 
     return [
         mark.mLaneMarkXYZW.x,
-        mark.mLaneMarkXYZW.y * -1,
+        mark.mLaneMarkXYZW.y * flip,
         mark.mLaneMarkXYZW.z,
         ""
     ];
@@ -197,19 +202,19 @@ export const getYaml = (json: JSON) => {
         const rectPoints = mMapAttr
             ? [
                 new YAML.Document(
-                    [mMapAttr.mMapOrigin.x, mMapAttr.mMapOrigin.y * -1, mMapAttr.mMapOrigin.z, ""],
+                    [mMapAttr.mMapOrigin.x, mMapAttr.mMapOrigin.y * flip, mMapAttr.mMapOrigin.z, ""],
                     { flow: true }
                 ),
                 new YAML.Document(
-                    [mMapAttr.mMapOrigin.x + mMapAttr.mMapLength, mMapAttr.mMapOrigin.y * -1, mMapAttr.mMapOrigin.z, ""],
+                    [mMapAttr.mMapOrigin.x + mMapAttr.mMapLength, mMapAttr.mMapOrigin.y * flip, mMapAttr.mMapOrigin.z, ""],
                     { flow: true }
                 ),
                 new YAML.Document(
-                    [mMapAttr.mMapOrigin.x + mMapAttr.mMapLength, (mMapAttr.mMapOrigin.y + mMapAttr.mMapWidth) * -1, mMapAttr.mMapOrigin.z, ""],
+                    [mMapAttr.mMapOrigin.x + mMapAttr.mMapLength, (mMapAttr.mMapOrigin.y + mMapAttr.mMapWidth) * flip, mMapAttr.mMapOrigin.z, ""],
                     { flow: true }
                 ),
                 new YAML.Document(
-                    [mMapAttr.mMapOrigin.x, (mMapAttr.mMapOrigin.y + mMapAttr.mMapWidth) * -1, mMapAttr.mMapOrigin.z, ""],
+                    [mMapAttr.mMapOrigin.x, (mMapAttr.mMapOrigin.y + mMapAttr.mMapWidth) * flip, mMapAttr.mMapOrigin.z, ""],
                     { flow: true }
                 )
             ]
@@ -263,45 +268,85 @@ export const getYaml = (json: JSON) => {
         const bidirectional = nearbyWaysData[ind].lane.contents.items[2].items[0].value.items[1].value;
 
 
-        const lane_1 = new YAML.Document(
-            [
-                startPointIndex,
-                nearbyWaysData[ind].markIndex,
-                {
-                    bidirectional: [4, bidirectional],
-                    demo_mock_floor_name: [1, ""],
-                    demo_mock_lift_name: [1, ""],
-                    graph_idx: [2, 0],
-                    mutex: [1, ""],
-                    orientation: [1, ""],
-                    speed_limit: [3, 0]
-                }
-            ],
-            { flow: true }
-        );
 
-        const lane_2 = new YAML.Document(
-            [
-                nearbyWaysData[ind].markIndex,
-                endPointIndex,
-                {
-                    bidirectional: [4, bidirectional],
-                    demo_mock_floor_name: [1, ""],
-                    demo_mock_lift_name: [1, ""],
-                    graph_idx: [2, 0],
-                    mutex: [1, ""],
-                    orientation: [1, ""],
-                    speed_limit: [3, 0]
-                }
-            ],
-            { flow: true }
-        );
 
-        nearbyWaysData[ind].proximity < 0.3 && (currentLanes = [
-            ...currentLanes.filter((lane: any) => lane !== nearbyWaysData[ind].lane),
-            lane_1,
-            lane_2
-        ]);
+        // для отсечения тупиковых дорог за местами появления роботов
+        if (place.mLaneMarkName.includes("charge")) {
+
+
+            const targetIndex = currentLanes.reduce((accum: number, lane: any) => {
+                const startIndex = lane.contents.items[0].value;
+
+                startIndex === startPointIndex && accum++;
+
+            }, 0);
+
+
+            const lane = new YAML.Document(
+                [
+                    targetIndex === 2 ? startPointIndex : nearbyWaysData[ind].markIndex,
+                    targetIndex === 2 ? nearbyWaysData[ind].markIndex : endPointIndex,
+                    {
+                        bidirectional: [4, bidirectional],
+                        demo_mock_floor_name: [1, ""],
+                        demo_mock_lift_name: [1, ""],
+                        graph_idx: [2, 0],
+                        mutex: [1, ""],
+                        orientation: [1, ""],
+                        speed_limit: [3, 0]
+                    }
+                ],
+                { flow: true }
+            );
+
+            nearbyWaysData[ind].proximity < 0.3 && (currentLanes = [
+                ...currentLanes.filter((lane: any) => lane !== nearbyWaysData[ind].lane),
+                lane
+            ]);
+        }
+        else {
+            const lane_1 = new YAML.Document(
+                [
+                    startPointIndex,
+                    nearbyWaysData[ind].markIndex,
+                    {
+                        bidirectional: [4, bidirectional],
+                        demo_mock_floor_name: [1, ""],
+                        demo_mock_lift_name: [1, ""],
+                        graph_idx: [2, 0],
+                        mutex: [1, ""],
+                        orientation: [1, ""],
+                        speed_limit: [3, 0]
+                    }
+                ],
+                { flow: true }
+            );
+
+            const lane_2 = new YAML.Document(
+                [
+                    nearbyWaysData[ind].markIndex,
+                    endPointIndex,
+                    {
+                        bidirectional: [4, bidirectional],
+                        demo_mock_floor_name: [1, ""],
+                        demo_mock_lift_name: [1, ""],
+                        graph_idx: [2, 0],
+                        mutex: [1, ""],
+                        orientation: [1, ""],
+                        speed_limit: [3, 0]
+                    }
+                ],
+                { flow: true }
+            );
+
+            nearbyWaysData[ind].proximity < 0.3 && (currentLanes = [
+                ...currentLanes.filter((lane: any) => lane !== nearbyWaysData[ind].lane),
+                lane_1,
+                lane_2
+            ]);
+
+        }
+
 
         nearbyWaysData[ind].proximity = 1000 * 1000;
         nearbyWaysData[ind].laneIndex = null;
@@ -334,7 +379,14 @@ export const getYaml = (json: JSON) => {
     /*end*/
 
 
+    const vertices = addVertices(targetLaneMarks ? targetLaneMarks.map((obj: any) => obj.mark) : [])
+        .map((vert: any) => {
 
+            vert.contents.items[0].value += coordinateOffsets[0];
+            vert.contents.items[1].value += coordinateOffsets[1];
+
+            return vert;
+        });
 
 
     doc.set("coordinate_system", "reference_image");
@@ -360,9 +412,12 @@ export const getYaml = (json: JSON) => {
     doc.set("levels", {
         L1: {
             drawing: {
-                filename: "domodedovo.png"
+                filename: "domodedovo.svg"
             },
             elevation: 0,
+            transform: {
+                translation: new YAML.Document(coordinateOffsets, { flow: true })
+            },
             fiducials: [
                 new YAML.Document([0, 0, ""], { flow: true })
             ],
@@ -375,7 +430,7 @@ export const getYaml = (json: JSON) => {
             layers: {
                 floor: {
                     color: new YAML.Document([1, 0, 0, 0.5], { flow: true }),
-                    filename: "domodedovo.png",
+                    filename: "domodedovo_full_hd.png",
                     transform: {
                         scale: objJson.mSceneMap?.mGridMsg.info.resolution ?? 0.05,
                         translation_x: 0,
@@ -388,7 +443,7 @@ export const getYaml = (json: JSON) => {
             measurements: mMapAttr ? [
                 new YAML.Document([0, 1, { distance: [3, mMapAttr.mMapLength] }], { flow: true })
             ] : [],
-            vertices: addVertices(targetLaneMarks ? targetLaneMarks.map((obj: any) => obj.mark) : []),
+            vertices,
             walls: {}
         }
     });
